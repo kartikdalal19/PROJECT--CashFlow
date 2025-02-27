@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./CashFlow-removebg-preview.png">
+    <title>CashFlow-Goals Tracker</title>
+    <style>
+        /* Global styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar .nav-item {
+        position: relative;
+        padding: 10px;
+    }
+
+    .sidebar .nav-item.active {
+        font-weight: bold;
+        background-color: #34495e;
+    }
+
+    .sidebar .nav-item.active::after {
+        content: "";
+        display: block;
+        width: 100%;
+        height: 3px;
+        background-color: white;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+    }
+    
+
+        .sidebar .nav-item {
+            margin: 15px 0;
+            font-size: 18px;
+        }
+
+        a {
+            font-size: 18px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar .nav-item li a.active,
+
+        .sidebar .nav-item:hover {
+            cursor: pointer;
+            background-color: #34495e;
+            padding-left: 10px;
+        }
+
+        /* Main content styles */
+        .main-content {
+            flex-grow: 1;
+            background-color: #FFDEE9;
+background-image: linear-gradient(0deg, #FFDEE9 0%, #B5FFFC 100%);
+
+            
+            padding: 40px;
+        }
+
+        h1 {
+            font-size: 30px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Goals Section */
+        .goal-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+        }
+
+        .goal-item:last-child {
+            border-bottom: none;
+        }
+
+        .goal-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .goal-info img {
+            width: 40px;
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        .goal-name {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .goal-progress {
+            width: 100%;
+            height: 8px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            margin-top: 10px;
+            position: relative;
+        }
+
+        .goal-progress .progress-bar {
+            height: 100%;
+            background-color: #3498db;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        .goal-details {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        /* Buttons */
+        .action-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-left: 5px;
+        }
+
+        .action-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .modify-btn {
+            background-color: #f1c40f;
+        }
+
+        .modify-btn:hover {
+            background-color: #d4ac0d;
+        }
+
+        .new-goal-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .new-goal-btn:hover {
+            background-color: #2980b9;
+        }
+
+        /* Empty message */
+        .empty-message {
+            text-align: center;
+            color:  black;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="nav-item"><a href="./dashboard.html">Dashboard</a></div>
+            <div class="nav-item" onclick="showSection('goals')" class="active">Goals</div>
+            <div class="nav-item"><a href="./transaction.html">Transaction</a></div>
+            <div class="nav-item" onclick="showSection('credit')">Credit</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div id="goals-section">
+                <h1>Goals</h1>
+
+                <!-- Empty message -->
+                <div id="empty-message" class="empty-message">You haven't saved any goals yet.</div>
+
+                <!-- Goals List -->
+                <div id="goals-list"></div>
+
+            <!-- Buttons -->
+                <button class="new-goal-btn" onclick="addGoal()">New Goal</button>
+            </div>
+
+            <div id="credit-section" style="display: none;">
+                <h1>Credit</h1>
+                <div id="credit-list"></div>
+                <button onclick="addCredit()">New Credit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(section) {
+            document.getElementById("goals-section").style.display = section === 'goals' ? 'block' : 'none';
+            document.getElementById("credit-section").style.display = section === 'credit' ? 'block' : 'none';
+        }
+
+        function checkEmptyMessage() {
+            let goalList = document.getElementById("goals-list");
+            let emptyMessage = document.getElementById("empty-message");
+            if (goalList.children.length === 0) {
+                emptyMessage.style.display = "block";
+            } else {
+                emptyMessage.style.display = "none";
+            }
+        }
+
+        function addGoal() {
+            let goalName = prompt("Enter goal name:");
+            if (!goalName) return;
+
+            let targetAmount = parseFloat(prompt("Enter target amount (₹):"));
+            if (!targetAmount || isNaN(targetAmount)) return;
+
+            let currentAmount = parseFloat(prompt("Enter current amount (₹) (optional):")) || 0;
+
+            let goalList = document.getElementById("goals-list");
+            let newGoal = document.createElement("div");
+            newGoal.classList.add("goal-item");
+
+            let progressPercentage = (currentAmount / targetAmount) * 100;
+
+            newGoal.innerHTML = `
+                <div class="goal-info">
+                    <img src="https://cdn-icons-png.flaticon.com/128/2917/2917995.png" alt="Goal">
+                    <div class="goal-name">${goalName}</div>
+                </div>
+                <div class="goal-progress">
+                    <div class="progress-bar" style="width: ${progressPercentage}%;"></div>
+                </div>
+                <div class="goal-details">
+                    ₹<span class="current-amount">${currentAmount}</span> / ₹<span class="target-amount">${targetAmount}</span>
+                </div>
+                <button class="action-btn modify-btn" onclick="modifyGoal(this)">Modify</button>
+                <button class="action-btn" onclick="deleteGoal(this)">Delete</button>
+            `;
+
+            goalList.appendChild(newGoal);
+            checkEmptyMessage();
+        }
+
+        function modifyGoal(button) {
+            let goalItem = button.parentElement;
+            let currentAmountElem = goalItem.querySelector(".current-amount");
+            let targetAmount = parseFloat(goalItem.querySelector(".target-amount").textContent);
+
+            let newAmount = parseFloat(prompt("Enter new saved amount (₹):"));
+            if (isNaN(newAmount) || newAmount < 0) {
+                alert("Invalid amount entered.");
+                return;
+            }
+
+            currentAmountElem.textContent = newAmount;
+
+            // Update progress bar
+            let progressBar = goalItem.querySelector(".progress-bar");
+            let progressPercentage = (newAmount / targetAmount) * 100;
+            progressBar.style.width = progressPercentage + "%";
+        }
+
+        function deleteGoal(button) {
+            let confirmation = confirm("Are you sure you want to delete this goal?");
+            if (confirmation) {
+                button.parentElement.remove();
+                checkEmptyMessage();
+            }
+        }
+
+        // Check empty message on page load
+        document.querySelectorAll(".sidebar .nav-item").forEach(item => {
+        item.addEventListener("click", function () {
+            // Remove 'active' class from all items
+            document.querySelectorAll(".sidebar .nav-item").forEach(el => el.classList.remove("active"));
+            // Add 'active' class to clicked item
+            this.classList.add("active");
+        });
+    });
+
+    // Set "Goals" as default active
+    document.addEventListener("DOMContentLoaded", function () {
+        let defaultActive = document.querySelector(".sidebar .nav-item:nth-child(2)");
+        if (defaultActive) {
+            defaultActive.classList.add("active");
+        }
+    });
+
+    function addCredit() {
+            let name = prompt("Enter creditor name:");
+            if (!name) return;
+
+            let principal = parseFloat(prompt("Enter principal amount (₹):"));
+            let rate = parseFloat(prompt("Enter interest rate (%):"));
+            let time = parseFloat(prompt("Enter total time (months):"));
+            let installmentGap = parseFloat(prompt("Enter months between installments:"));
+            
+            if (isNaN(principal) || isNaN(rate) || isNaN(time) || isNaN(installmentGap) || principal <= 0 || rate <= 0 || time <= 0 || installmentGap <= 0) {
+                alert("Invalid input");
+                return;
+            }
+            
+            let totalInstallments = Math.ceil(time / installmentGap);
+            let installmentAmount = (principal * (1 + (rate / 100) * (time / 12))) / totalInstallments;
+            let currentInstallment = 0;
+            let startDate = new Date();
+            let nextDueDate = new Date(startDate);
+            nextDueDate.setMonth(nextDueDate.getMonth() + installmentGap);
+
+            let creditList = document.getElementById("credit-list");
+            let creditItem = document.createElement("div");
+            creditItem.classList.add("credit-item");
+
+            creditItem.innerHTML = `
+                <div>
+                    <strong>${name}</strong><br>
+                    Amount: ₹${principal} | Interest: ${rate}% | Time: ${time} months<br>
+                    Installment: ₹${installmentAmount.toFixed(2)} every ${installmentGap} months
+                </div>
+                <div>
+                    Next Due Date: <span class="due-date">${nextDueDate.toDateString()}</span>
+                </div>
+                <button onclick="payInstallment(this, ${installmentGap}, ${totalInstallments})">Current Installment paid</button>
+            `;
+            creditList.appendChild(creditItem);
+        }
+
+        function payInstallment(button, installmentGap, totalInstallments) {
+            let creditItem = button.parentElement;
+            let dueDateElem = creditItem.querySelector(".due-date");
+            let currentInstallment = parseInt(creditItem.getAttribute("data-installments") || 0) + 1;
+            let nextDueDate = new Date(dueDateElem.textContent);
+            nextDueDate.setMonth(nextDueDate.getMonth() + installmentGap);
+            dueDateElem.textContent = nextDueDate.toDateString();
+            creditItem.setAttribute("data-installments", currentInstallment);
+
+            if (currentInstallment >= totalInstallments) {
+                creditItem.remove();
+            }
+        }
+
+    
+    </script>
+</body>
+</html>

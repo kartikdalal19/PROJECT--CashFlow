@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CashFlow-Transactions</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="./CashFlow-removebg-preview.png">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+background-color: #B5FFFC;
+      padding: 32px;
+      color: #333;
+      background-repeat: no-repeat;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .transaction-list {
+      margin-top: 24px;
+    }
+
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f1f1;
+    }
+
+    .transaction-item:last-child {
+      border-bottom: none;
+    }
+
+    .transaction-item .amount {
+      font-weight: 500;
+    }
+
+    .transaction-item .date {
+      font-size: 12px;
+      color: #6c757d;
+      margin-left: 10px;
+    }
+
+    
+    .btn-back {
+      display: inline-block;
+      margin-top: 16px;
+      background-color: #007bff;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .btn-reset{
+      display: inline-block;
+      margin-top: 16px;
+      background-color: #007bff;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    a {
+      color: white;
+      text-decoration: none;
+    }
+
+    
+    .btn-reset:hover {
+      background-color: #0056b3;
+    }
+
+    .btn-back:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="title">Your Transactions</div>
+    
+    <div class="transaction-list" id="transaction-list">
+      <!-- Transactions will appear here -->
+    </div>
+
+    <button class="btn-back"><a href="./dashboard.html">Back to Dashboard</a></button>
+    <button class="btn-reset" onclick="resetTransactions()">Reset Transactions</button>
+    <button class="btn-back"><a href="./report.html">Generate Report</a></button>
+  </div>
+
+  <script>
+    // Function to load and display transactions from localStorage
+    function loadTransactions() {
+      // Get transactions from localStorage
+      const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+      const transactionList = document.getElementById('transaction-list');
+
+      if (transactions.length === 0) {
+        transactionList.innerHTML = '<p>No transactions available.</p>';
+        return;
+      }
+
+      // Iterate through each transaction and display it
+      transactions.forEach(transaction => {
+        const transactionItem = document.createElement('div');
+        transactionItem.classList.add('transaction-item');
+        transactionItem.innerHTML = `
+          <span>${transaction.category}: ${transaction.description}</span>
+          <span class="amount">₹${transaction.amount}</span>
+          <span class="date">${transaction.date}</span> <!-- Show the date here -->
+        `;
+        transactionList.appendChild(transactionItem);
+      });
+    }
+
+    // Function to reset transactions by clearing localStorage
+    function resetTransactions() {
+      // Clear all transactions from localStorage
+      localStorage.removeItem('transactions');
+
+      // Reload the transactions list (which will be empty now)
+      loadTransactions();
+    }
+
+    // Load transactions when the page is loaded
+    loadTransactions();
+  </script>
+</body>
+</html>
