@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CashFlow-Report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="./CashFlow-removebg-preview.png">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #B5FFFC;
+      padding: 32px;
+      color: #333;
+      text-align: center;
+    }
+
+    .container {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    canvas {
+      margin-top: 20px;
+    }
+
+    .btn-back {
+      display: inline-block;
+      margin-top: 16px;
+      background-color: #007bff;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .btn-back:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="title">Transaction Summary</div>
+    <canvas id="transactionChart"></canvas>
+    <button class="btn-back" onclick="window.location.href='transaction.html'">Back to Transactions</button>
+  </div>
+
+  <script>
+    function loadTransactionData() {
+      const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+      
+      if (transactions.length === 0) {
+        document.getElementById('transactionChart').outerHTML = '<p>No transactions available.</p>';
+        return;
+      }
+      
+      const categoryTotals = {};
+      transactions.forEach(transaction => {
+        if (categoryTotals[transaction.category]) {
+          categoryTotals[transaction.category] += parseFloat(transaction.amount);
+        } else {
+          categoryTotals[transaction.category] = parseFloat(transaction.amount);
+        }
+      });
+
+      const labels = Object.keys(categoryTotals);
+      const data = Object.values(categoryTotals);
+
+      const ctx = document.getElementById('transactionChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Total Amount by Category',
+            data: data,
+            backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    window.onload = loadTransactionData;
+  </script>
+</body>
+</html>
